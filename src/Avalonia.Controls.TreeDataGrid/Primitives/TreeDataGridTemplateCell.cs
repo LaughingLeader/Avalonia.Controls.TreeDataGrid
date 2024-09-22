@@ -93,17 +93,17 @@ namespace Avalonia.Controls.Primitives
         {
             base.OnAttachedToLogicalTree(e);
 
-            if (ContentTemplate is null && DataContext is TemplateCell cell)
+            if (ContentTemplate is null && DataContext is ITemplateCell cell)
             {
                 ContentTemplate = cell.GetCellTemplate(this);
-                EditingTemplate = cell.GetCellEditingTemplate?.Invoke(this);
+                EditingTemplate = cell.GetCellEditingTemplate(this);
             }
         }
 
         protected override void OnDataContextChanged(EventArgs e)
         {
             base.OnDataContextChanged(e);
-            var cell = DataContext as TemplateCell;
+            var cell = DataContext as ITemplateCell;
 
             // If DataContext is null, we're unrealized. Don't clear the content template for unrealized
             // cells because this will mean that when the cell is realized again the template will need
@@ -115,7 +115,7 @@ namespace Avalonia.Controls.Primitives
                 if (((ILogical)this).IsAttachedToLogicalTree)
                 {
                     ContentTemplate = cell.GetCellTemplate(this);
-                    EditingTemplate = cell.GetCellEditingTemplate?.Invoke(this);
+                    EditingTemplate = cell.GetCellEditingTemplate(this);
                 }
             }
             else

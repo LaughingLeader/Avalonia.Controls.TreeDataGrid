@@ -60,12 +60,12 @@ namespace Avalonia.Controls.Primitives
             elements.Add(element);
         }
 
-        protected virtual Control CreateElement(object? data)
+        public virtual Control CreateElement(object? data)
         {
             return data switch
             {
                 CheckBoxCell => new TreeDataGridCheckBoxCell(),
-                TemplateCell => new TreeDataGridTemplateCell(),
+                ITemplateCell => new TreeDataGridTemplateCell(),
                 IExpanderCell => new TreeDataGridExpanderCell(),
                 ICell => new TreeDataGridTextCell(),
                 IColumn => new TreeDataGridColumnHeader(),
@@ -74,12 +74,12 @@ namespace Avalonia.Controls.Primitives
             };
         }
 
-        protected virtual string GetDataRecycleKey(object? data)
+        public virtual string GetDataRecycleKey(object? data)
         {
             return data switch
             {
                 CheckBoxCell => typeof(TreeDataGridCheckBoxCell).FullName!,
-                TemplateCell => typeof(TreeDataGridTemplateCell).FullName!,
+                ITemplateCell => typeof(TreeDataGridTemplateCell).FullName!,
                 IExpanderCell => typeof(TreeDataGridExpanderCell).FullName!,
                 ICell => typeof(TreeDataGridTextCell).FullName!,
                 IColumn => typeof(TreeDataGridColumnHeader).FullName!,
@@ -88,7 +88,7 @@ namespace Avalonia.Controls.Primitives
             };
         }
 
-        protected virtual string GetElementRecycleKey(Control element)
+        public virtual string GetElementRecycleKey(Control element)
         {
             return element.GetType().FullName!;
         }

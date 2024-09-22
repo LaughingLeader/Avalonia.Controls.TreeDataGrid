@@ -5,9 +5,12 @@ using Avalonia.Controls.Templates;
 
 namespace Avalonia.Controls.Models.TreeDataGrid
 {
-    public class TemplateCell : ICell, IEditableObject
+    public class TemplateCell : ICell, IEditableObject, ITemplateCell
     {
         private ITemplateCellOptions? _options;
+
+        private Func<Control, IDataTemplate> _getCellTemplate;
+        private Func<Control, IDataTemplate>? _getCellEditingTemplate;
 
         public TemplateCell(
             object? value,
@@ -15,16 +18,18 @@ namespace Avalonia.Controls.Models.TreeDataGrid
             Func<Control, IDataTemplate>? getCellEditingTemplate,
             ITemplateCellOptions? options)
         {
-            GetCellTemplate = getCellTemplate;
-            GetCellEditingTemplate = getCellEditingTemplate;
+            _getCellTemplate = getCellTemplate;
+            _getCellEditingTemplate = getCellEditingTemplate;
             Value = value;
             _options = options;
         }
 
-        public bool CanEdit => GetCellEditingTemplate is not null;
+        public IDataTemplate GetCellTemplate(Control control) => _getCellTemplate(control);
+        public IDataTemplate? GetCellEditingTemplate(Control control) => _getCellEditingTemplate?.Invoke(control);
+
+        public bool CanEdit => _getCellEditingTemplate is not null;
         public BeginEditGestures EditGestures => _options?.BeginEditGestures ?? BeginEditGestures.Default;
-        public Func<Control, IDataTemplate> GetCellTemplate { get; }
-        public Func<Control, IDataTemplate>? GetCellEditingTemplate { get; }
+        
         public object? Value { get; }
 
         void IEditableObject.BeginEdit() => (Value as IEditableObject)?.BeginEdit();
