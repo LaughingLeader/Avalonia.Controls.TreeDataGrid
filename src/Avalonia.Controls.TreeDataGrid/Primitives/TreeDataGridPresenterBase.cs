@@ -41,6 +41,7 @@ namespace Avalonia.Controls.Primitives
         private bool _isInLayout;
         private bool _isWaitingForViewportUpdate;
         private IReadOnlyList<TItem>? _items;
+        private bool _isSubscribedToItemChanges;
         private RealizedStackElements? _measureElements;
         private RealizedStackElements? _realizedElements;
         private ScrollViewer? _scrollViewer;
@@ -53,7 +54,6 @@ namespace Avalonia.Controls.Primitives
             _recycleElement = RecycleElement;
             _recycleElementOnItemRemoved = RecycleElementOnItemRemoved;
             _updateElementIndex = UpdateElementIndex;
-            EffectiveViewportChanged += OnEffectiveViewportChanged;
         }
 
         public TreeDataGridElementFactory? ElementFactory
@@ -69,14 +69,12 @@ namespace Avalonia.Controls.Primitives
             {
                 if (_items != value)
                 {
-                    if (_items is INotifyCollectionChanged oldIncc)
-                        oldIncc.CollectionChanged -= OnItemsCollectionChanged;
+                    UnsubscribeFromItemChanges();
 
                     var oldValue = _items;
                     _items = value;
 
-                    if (_items is INotifyCollectionChanged newIncc)
-                        newIncc.CollectionChanged += OnItemsCollectionChanged;
+                    SubscribeToItemChanges();
 
                     RaisePropertyChanged(
                         ItemsProperty,
@@ -397,16 +395,40 @@ namespace Avalonia.Controls.Primitives
             }
         }
 
+        protected virtual (int index, double position) GetOrEstimateAnchorElementForViewport(
+            double viewportStart,
+            double viewportEnd,
+            int itemCount)
+        {
+            Debug.Assert(_realizedElements is not null);
+
+            return _realizedElements.GetOrEstimateAnchorElementForViewport(
+                viewportStart,
+                viewportEnd,
+                itemCount,
+                ref _lastEstimatedElementSizeU);
+        }
+
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnAttachedToVisualTree(e);
             _scrollViewer = this.FindAncestorOfType<ScrollViewer>();
+            
+            // Subscribing to this event adds a reference to 'this' in the layout manager.
+            // so this must be unsubscribed to avoid memory leaks.
+            EffectiveViewportChanged += OnEffectiveViewportChanged;
+            
+            SubscribeToItemChanges();
         }
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnDetachedFromVisualTree(e);
             _scrollViewer = null;
+            
+            EffectiveViewportChanged -= OnEffectiveViewportChanged;
+
+            UnsubscribeFromItemChanges();
         }
 
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
@@ -444,6 +466,24 @@ namespace Avalonia.Controls.Primitives
         protected virtual void UnrealizeElementOnItemRemoved(Control element)
         {
             UnrealizeElement(element);
+        }
+
+        private void SubscribeToItemChanges()
+        {
+            if (!_isSubscribedToItemChanges && _items is INotifyCollectionChanged newIncc)
+            {
+                newIncc.CollectionChanged += OnItemsCollectionChanged;
+                _isSubscribedToItemChanges = true;
+            }
+        }
+
+        private void UnsubscribeFromItemChanges()
+        {
+            if (_isSubscribedToItemChanges && _items is INotifyCollectionChanged oldIncc)
+            {
+                oldIncc.CollectionChanged -= OnItemsCollectionChanged;
+                _isSubscribedToItemChanges = false;
+            }
         }
 
         private void RealizeElements(
@@ -539,11 +579,7 @@ namespace Avalonia.Controls.Primitives
 
             // Get or estimate the anchor element from which to start realization.
             var itemCount = items.Count;
-            var (anchorIndex, anchorU) = _realizedElements.GetOrEstimateAnchorElementForViewport(
-                viewportStart,
-                viewportEnd,
-                itemCount,
-                ref _lastEstimatedElementSizeU);
+            var (anchorIndex, anchorU) = GetOrEstimateAnchorElementForViewport(viewportStart, viewportEnd, itemCount);
 
             // Check if the anchor element is not within the currently realized elements.
             var disjunct = anchorIndex < _realizedElements.FirstIndex ||
@@ -629,9 +665,8 @@ namespace Avalonia.Controls.Primitives
             {
                 if (!c.Bounds.Equals(default) && c.TransformToVisual(this) is Matrix transform)
                 {
-                    return new Rect(0, 0, c.Bounds.Width, c.Bounds.Height)
-                        .TransformToAABB(transform)
-                        .Intersect(new(0, 0, double.PositiveInfinity, double.PositiveInfinity));
+                    var r = new Rect(0, 0, c.Bounds.Width, c.Bounds.Height).TransformToAABB(transform);
+                    return Intersect(r, new(0, 0, double.PositiveInfinity, double.PositiveInfinity));
                 }
 
                 c = c?.GetVisualParent();
