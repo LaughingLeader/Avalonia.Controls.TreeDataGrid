@@ -3,13 +3,11 @@
     <TargetFramework>net5.0</TargetFramework>
     <IsPackable>True</IsPackable>
     <RootNamespace>Avalonia.Controls</RootNamespace>
-  </PropertyGroup>
-  <PropertyGroup>
     <PackageId>Avalonia.Controls.TreeDataGrid</PackageId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
-    
-    <PackageReference Include="System.Reactive" Version="5.0.0" />
+    <PackageReference Include="Avalonia" Version="11.2.8" />
+    <PackageReference Include="System.Reactive" Version="6.0.1" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
   </ItemGroup>
 </Project>
