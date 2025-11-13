@@ -530,10 +530,10 @@ namespace Avalonia.Controls
             return _dragAdorner;
         }
 
-        private void ShowDragAdorner(TreeDataGridRow row, TreeDataGridRowDropPosition position)
+        private void ShowDragAdorner(Visual useVisualTransform, TreeDataGridRowDropPosition position)
         {
             if (position == TreeDataGridRowDropPosition.None ||
-                row.TransformToVisual(this) is not { } transform)
+                useVisualTransform.TransformToVisual(this) is not { } transform)
             {
                 HideDragAdorner();
                 return;
@@ -544,7 +544,7 @@ namespace Avalonia.Controls
                 return;
 
             var rectangle = (Rectangle)adorner.Children[0];
-            var rowBounds = new Rect(row.Bounds.Size).TransformToAABB(transform);
+            var rowBounds = new Rect(useVisualTransform.Bounds.Size).TransformToAABB(transform);
 
             Canvas.SetLeft(rectangle, rowBounds.Left);
             rectangle.Width = rowBounds.Width;
@@ -644,6 +644,8 @@ namespace Avalonia.Controls
 
         private void OnDragOver(DragEventArgs e)
         {
+            var isEmpty = Rows == null || Rows?.Count == 0;
+
             if (!TryGetRow(e.Source as Control, out var row))
             {
                 row = new TreeDataGridRow();
@@ -664,7 +666,14 @@ namespace Avalonia.Controls
                 adorner = ev.Position;
             }
 
-            ShowDragAdorner(row, adorner);
+            if(!isEmpty || ColumnHeadersPresenter == null)
+            {
+                ShowDragAdorner(row, adorner);
+            }
+            else
+            {
+                ShowDragAdorner(ColumnHeadersPresenter, adorner);
+            }
 
             if (Scroll is ScrollViewer scroller)
             {
