@@ -646,12 +646,13 @@ namespace Avalonia.Controls
         {
             if (!TryGetRow(e.Source as Control, out var row))
             {
-                e.DragEffects = DragDropEffects.None;
-                return;
+                row = new TreeDataGridRow();
             }
 
             if (!CalculateAutoDragDrop(row, e, out _, out var adorner))
+            {
                 e.DragEffects = DragDropEffects.None;
+            }
 
             var route = BuildEventRoute(RowDragOverEvent);
 
@@ -688,7 +689,10 @@ namespace Avalonia.Controls
             StopDrag();
 
             if (!TryGetRow(e.Source as Control, out var row))
-                return;
+            {
+                row = new TreeDataGridRow();
+                row.UpdateIndex(0);
+            }
 
             var autoDrop = CalculateAutoDragDrop(row, e, out var data, out var position);
             var route = BuildEventRoute(RowDropEvent);
@@ -705,9 +709,7 @@ namespace Avalonia.Controls
                 position = ev.Position;
             }
 
-            if (autoDrop &&
-                _source is not null &&
-                position != TreeDataGridRowDropPosition.None)
+            if (autoDrop && _source is not null && position != TreeDataGridRowDropPosition.None)
             {
                 var targetIndex = _source.Rows.RowIndexToModelIndex(row.RowIndex);
                 _source.DragDropRows(_source, data!.Indexes, targetIndex, position, e.DragEffects);

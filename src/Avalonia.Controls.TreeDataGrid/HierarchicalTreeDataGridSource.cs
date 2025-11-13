@@ -281,9 +281,19 @@ namespace Avalonia.Controls
                 }
             }
 
-            for (var si = sourceItems.Count - 1; si >= 0; --si)
+            if(targetItems.Count == 0)
             {
-                targetItems.Insert(ti++, sourceItems[si]);
+                foreach (var entry in sourceItems)
+                {
+                    targetItems.Add(entry);
+                }
+            }
+            else
+            {
+                for (var si = sourceItems.Count - 1; si >= 0; --si)
+                {
+                    targetItems.Insert(ti++, sourceItems[si]);
+                }
             }
         }
 
