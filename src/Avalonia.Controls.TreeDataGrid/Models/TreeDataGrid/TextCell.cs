@@ -49,12 +49,16 @@ namespace Avalonia.Controls.Models.TreeDataGrid
         {
             get
             {
-                if (_isEditing)
-                    return _editText;
-                else if (_options?.StringFormat is { } format)
+                if (_isEditing) return _editText;
+
+                if (_options?.StringFormat is { } format)
+                {
                     return string.Format(_options.Culture ?? CultureInfo.CurrentCulture, format, _value);
+                }
                 else
+                {
                     return _value?.ToString();
+                }
             }
             set
             {

@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls.Primitives;
+﻿using Avalonia.Controls.Models.TreeDataGrid;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 
@@ -35,6 +36,16 @@ namespace Avalonia.Controls
         /// Gets the <see cref="DragEventArgs"/> that describes the drag/drop operation.
         /// </summary>
         public DragEventArgs Inner { get; }
+
+        public DragInfo? Info { 
+            get {
+                if (Inner.DataTransfer is DragDropDataTransfer ddTransfer)
+                {
+                    return ddTransfer.Data;
+                }
+                return null;
+            }
+        }
 
         /// <summary>
         /// Gets the row being dragged over.

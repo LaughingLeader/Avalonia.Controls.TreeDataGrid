@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -469,10 +470,9 @@ namespace Avalonia.Controls
 
             if (allowedEffects != DragDropEffects.None)
             {
-                var data = new DataObject();
                 var info = new DragInfo(_source, RowSelection.SelectedIndexes.ToList());
-                data.Set(DragInfo.DataFormat, info);
-                DragDrop.DoDragDrop(trigger, data, allowedEffects);
+                var data = new DragDropDataTransfer() { Data = info };
+                DragDrop.DoDragDropAsync(trigger, data, allowedEffects).Wait();
             }
         }
 
@@ -613,15 +613,18 @@ namespace Avalonia.Controls
             out TreeDataGridRowDropPosition position)
         {
             if (!AutoDragDropRows ||
-                e.Data.Get(DragInfo.DataFormat) is not DragInfo di ||
+                e.DataTransfer is not DragDropDataTransfer ddTransfer ||
+                ddTransfer?.Data == null ||
                 _source is null ||
                 _source.IsSorted ||
-                di.Source != _source)
+                ddTransfer?.Data?.Source != _source)
             {
                 data = null;
                 position = TreeDataGridRowDropPosition.None;
                 return false;
             }
+
+            var di = ddTransfer.Data;
 
             var targetIndex = _source.Rows.RowIndexToModelIndex(targetRow.RowIndex);
             position = GetDropPosition(_source, e, targetRow);
