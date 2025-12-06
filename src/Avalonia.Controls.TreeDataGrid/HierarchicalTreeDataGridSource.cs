@@ -283,7 +283,7 @@ namespace Avalonia.Controls
 
             if(targetItems.Count == 0)
             {
-                foreach (var entry in sourceItems)
+                foreach (var entry in sourceItems.Reverse<TModel>())
                 {
                     targetItems.Add(entry);
                 }
