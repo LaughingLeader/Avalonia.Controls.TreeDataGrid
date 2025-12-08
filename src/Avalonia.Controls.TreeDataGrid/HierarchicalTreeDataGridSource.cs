@@ -244,10 +244,10 @@ namespace Avalonia.Controls
                     throw new InvalidOperationException("Items does not implement IList<T>.");
             }
 
-            if (effects != DragDropEffects.Move)
-                throw new NotSupportedException("Only move is currently supported for drag/drop.");
-            if (IsSorted)
-                throw new NotSupportedException("Drag/drop is not supported on sorted data.");
+            //if (effects != DragDropEffects.Move)
+            //    throw new NotSupportedException("Only move is currently supported for drag/drop.");
+            //if (IsSorted)
+            //    throw new NotSupportedException("Drag/drop is not supported on sorted data.");
 
             IList<TModel> targetItems;
             int ti;
