@@ -470,9 +470,9 @@ namespace Avalonia.Controls
 
             if (allowedEffects != DragDropEffects.None)
             {
-                var info = new DragInfo(_source, RowSelection.SelectedIndexes.ToList());
+                var info = new DragInfo(_source, [.. RowSelection.SelectedIndexes]);
                 var data = new DragDropDataTransfer() { Data = info };
-                DragDrop.DoDragDropAsync(trigger, data, allowedEffects).Wait();
+                DragDrop.DoDragDropAsync(trigger, data, allowedEffects);
             }
         }
 
