@@ -91,13 +91,15 @@ namespace Avalonia.Controls
         public bool IsHierarchical => true;
         public bool IsSorted => _comparison is not null;
 
+        public Comparison<TModel>? CurrentSortComparison => _comparison;
+
         IColumns ITreeDataGridSource.Columns => Columns;
 
         public event EventHandler<RowEventArgs<HierarchicalRow<TModel>>>? RowExpanding;
         public event EventHandler<RowEventArgs<HierarchicalRow<TModel>>>? RowExpanded;
         public event EventHandler<RowEventArgs<HierarchicalRow<TModel>>>? RowCollapsing;
         public event EventHandler<RowEventArgs<HierarchicalRow<TModel>>>? RowCollapsed;
-        public event Action? Sorted;
+        public event EventHandler<TreeDataGridSortedEventArgs>? Sorted;
 
         public void Dispose()
         {
@@ -208,7 +210,7 @@ namespace Avalonia.Controls
                 columnBase.GetComparison(direction) is Comparison<TModel> comparison)
             {
                 Sort(comparison);
-                Sorted?.Invoke();
+                Sorted?.Invoke(this, new(column, direction));
                 foreach (var c in Columns)
                     c.SortDirection = c == column ? (ListSortDirection?)direction : null;
                 return true;

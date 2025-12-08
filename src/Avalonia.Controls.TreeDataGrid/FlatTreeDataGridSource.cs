@@ -81,7 +81,7 @@ namespace Avalonia.Controls
         public bool IsHierarchical => false;
         public bool IsSorted => _comparer is not null;
 
-        public event Action? Sorted;
+        public event EventHandler<TreeDataGridSortedEventArgs>? Sorted;
 
         public void Dispose()
         {
@@ -148,7 +148,7 @@ namespace Avalonia.Controls
                 {
                     _comparer = comparer is not null ? new FuncComparer<TModel>(comparer) : null;
                     _rows?.Sort(_comparer);
-                    Sorted?.Invoke();
+                    Sorted?.Invoke(this, new(column, direction));
                     foreach (var c in Columns)
                         c.SortDirection = c == column ? direction : null;
                 }

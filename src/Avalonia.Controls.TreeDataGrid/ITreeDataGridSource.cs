@@ -40,7 +40,7 @@ namespace Avalonia.Controls
         /// <summary>
         /// Event which would be triggered after SortBy method execution.
         /// </summary>
-        event Action Sorted;
+        event EventHandler<TreeDataGridSortedEventArgs>? Sorted;
 
         /// <summary>
         /// Executes a row drag/drop operation.

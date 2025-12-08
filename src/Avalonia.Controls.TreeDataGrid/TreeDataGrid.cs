@@ -765,7 +765,7 @@ namespace Avalonia.Controls
             }
         }
 
-        private void OnSourceSorted()
+        private void OnSourceSorted(object? sender, TreeDataGridSortedEventArgs e)
         {
             RowsPresenter?.RecycleAllElements();
             RowsPresenter?.InvalidateMeasure();
