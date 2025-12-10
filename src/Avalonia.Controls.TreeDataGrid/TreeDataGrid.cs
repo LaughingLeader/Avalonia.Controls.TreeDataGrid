@@ -479,7 +479,14 @@ namespace Avalonia.Controls
             {
                 var info = new DragInfo(_source, [.. RowSelection.SelectedIndexes]);
                 var data = new DragDropDataTransfer() { Data = info };
-                DragDrop.DoDragDropAsync(trigger, data, allowedEffects);
+                try
+                {
+                    DragDrop.DoDragDropAsync(trigger, data, allowedEffects);
+                }
+                catch(Exception ex)
+                {
+                    System.Diagnostics.Trace.WriteLine(ex);
+                }
             }
         }
 
@@ -710,7 +717,7 @@ namespace Avalonia.Controls
             if (!TryGetRow(e.Source as Control, out var row))
             {
                 row = new TreeDataGridRow();
-                row.UpdateIndex(0);
+                row.UpdateIndex(Rows?.Count ?? 0);
             }
 
             var autoDrop = CalculateAutoDragDrop(row, e, out var data, out var position);
