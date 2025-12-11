@@ -283,7 +283,7 @@ namespace Avalonia.Controls
                 }
             }
 
-            if(targetItems.Count == 0)
+            if(targetItems.Count == 0 || position == TreeDataGridRowDropPosition.None)
             {
                 foreach (var entry in sourceItems.Reverse<TModel>())
                 {
@@ -327,7 +327,7 @@ namespace Avalonia.Controls
         {
         }
 
-        internal IEnumerable<TModel>? GetModelChildren(TModel model)
+        public IEnumerable<TModel>? GetModelChildren(TModel model)
         {
             _ = _expanderColumn ?? throw new InvalidOperationException("No expander column defined.");
             return _expanderColumn.GetChildModels(model);
