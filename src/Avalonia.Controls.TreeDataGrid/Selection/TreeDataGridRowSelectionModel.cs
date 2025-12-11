@@ -391,7 +391,7 @@ namespace Avalonia.Controls.Selection
                 rangeModifier: e.KeyModifiers.HasFlag(KeyModifiers.Shift),
                 toggleModifier: toggleModifier,
                 rightButton: isRightButton);
-            e.Handled = true;
+            //e.Handled = true;
         }
 
         private void UpdateSelection(

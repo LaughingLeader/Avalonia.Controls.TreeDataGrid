@@ -204,7 +204,7 @@ namespace Avalonia.Controls.Selection
                 cell.RowIndex,
                 rangeModifier: e.KeyModifiers.HasFlag(KeyModifiers.Shift),
                 rightButton: isRightButton);
-            e.Handled = true;
+            //e.Handled = true;
         }
 
         private (int x, int y) GetAnchor()
