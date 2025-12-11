@@ -9,13 +9,15 @@ namespace Avalonia.Controls
     /// </summary>
     public class TreeDataGridRowDragStartedEventArgs : RoutedEventArgs
     {
-        public TreeDataGridRowDragStartedEventArgs(IEnumerable<object> models)
+        public TreeDataGridRowDragStartedEventArgs(IEnumerable<object> models, PointerEventArgs innerEvent)
             : base(TreeDataGrid.RowDragStartedEvent)
         {
             Models = models;
+            Inner = innerEvent;
         }
 
         public DragDropEffects AllowedEffects { get; set; }
         public IEnumerable<object> Models { get; }
+        public PointerEventArgs Inner { get; }
     }
 }

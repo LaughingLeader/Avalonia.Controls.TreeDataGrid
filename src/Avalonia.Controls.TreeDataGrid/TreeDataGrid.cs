@@ -469,13 +469,13 @@ namespace Avalonia.Controls
 
             if (route.HasHandlers)
             {
-                var e = new TreeDataGridRowDragStartedEventArgs(RowSelection.SelectedItems!);
+                var e = new TreeDataGridRowDragStartedEventArgs(RowSelection.SelectedItems!, trigger);
                 e.AllowedEffects = allowedEffects;
                 RaiseEvent(e);
                 allowedEffects = e.AllowedEffects;
             }
 
-            if (allowedEffects != DragDropEffects.None)
+            if (allowedEffects != DragDropEffects.None && !trigger.Handled)
             {
                 var info = new DragInfo(_source, [.. RowSelection.SelectedIndexes]);
                 var data = new DragDropDataTransfer() { Data = info };
@@ -574,6 +574,7 @@ namespace Avalonia.Controls
                     rectangle.Height = 0;
                     break;
                 case TreeDataGridRowDropPosition.Inside:
+                default:
                     Canvas.SetTop(rectangle, rowBounds.Top);
                     rectangle.Height = rowBounds.Height;
                     break;
