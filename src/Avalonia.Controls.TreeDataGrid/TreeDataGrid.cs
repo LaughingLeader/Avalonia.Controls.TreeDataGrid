@@ -30,6 +30,9 @@ namespace Avalonia.Controls
         public static readonly StyledProperty<bool> LockDragDropWhenSortedProperty =
             AvaloniaProperty.Register<TreeDataGrid, bool>(nameof(LockDragDropWhenSorted), true);
 
+        public static readonly StyledProperty<ScrollBarVisibility> RowsHorizontalScrollBarVisibilityProperty =
+            AvaloniaProperty.Register<TreeDataGrid, ScrollBarVisibility>(nameof(RowsHorizontalScrollBarVisibility), ScrollBarVisibility.Auto);
+
         public static readonly DirectProperty<TreeDataGrid, IColumns?> ColumnsProperty =
             AvaloniaProperty.RegisterDirect<TreeDataGrid, IColumns?>(
                 nameof(Columns),
@@ -166,6 +169,12 @@ namespace Avalonia.Controls
         {
             get => GetValue(ShowColumnHeadersProperty);
             set => SetValue(ShowColumnHeadersProperty, value);
+        }
+
+        public ScrollBarVisibility RowsHorizontalScrollBarVisibility
+        {
+            get => GetValue(RowsHorizontalScrollBarVisibilityProperty);
+            set => SetValue(RowsHorizontalScrollBarVisibilityProperty, value);
         }
 
         public ITreeDataGridCellSelectionModel? ColumnSelection => Source?.Selection as ITreeDataGridCellSelectionModel;

@@ -54,7 +54,7 @@
                   </Border>
                 </ScrollViewer>
                 <ScrollViewer Name="PART_ScrollViewer"
-                              HorizontalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="{TemplateBinding RowsHorizontalScrollBarVisibility}"
                               BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}">
                   <TreeDataGridRowsPresenter Name="PART_RowsPresenter"
                                              Columns="{TemplateBinding Columns}"
